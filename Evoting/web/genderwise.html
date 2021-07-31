@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="jsscript/adminoptions.js"></script>
+        <script src="jsscript/jquery.js"></script>
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+        <link href="stylesheet/backgroundimage.css" rel="stylesheet">
+        <link href="stylesheet/pageheader.css" rel="stylesheet">
+        <link href="stylesheet/admin.css" rel="stylesheet">
+        
+        <style>
+            
+        </style>
+    </head>    
+    <body onload="result()">
+
+        <canvas id="myChart" style="width:100%;max-width:600px"></canvas>
+      <div id="rest"></div>
+        
+        
+        <script>
+            function result() {
+                let malePer,femalePer;
+                data = {data: 'genderratio'};
+                $.post("ElectionResultControllerServlet", data, function (responseText) {
+                    var gender_data = JSON.parse(responseText);
+                    malePer = gender_data.male;
+                    femalePer = gender_data.female;
+                    var div = gender_data.div;
+                    var xValues = ["Male", "Female"];
+                    var yValues = [malePer.toFixed(2), femalePer.toFixed(2)];
+                    var barColors = [
+                        "#b91d47",
+                        "#00aba9",
+                        "#2b5797",
+                        "#e8c3b9",
+                        "#1e7145"
+                    ];
+
+                    new Chart("myChart", {
+                        type: "pie",
+                        data: {
+                            labels: xValues,
+                            datasets: [{
+                                    backgroundColor: barColors,
+                                    data: yValues
+                                }]
+                        },
+                        options: {
+                            title: {
+                                display: true,
+                                text: "Gender wise voting percentage"
+                            }
+                        }
+                    });
+                    
+                var newdiv = document.createElement("div");
+                newdiv.setAttribute("id", "candidateform");
+                newdiv.setAttribute("float", "left");
+                newdiv.setAttribute("padding-right", "45px");
+                newdiv.setAttribute("border", "solid 2px red");
+                newdiv.setAttribute("text-align", "center");
+                newdiv.innerHTML = "<h2>Male Voting Percentage:"+malePer.toFixed(2)+"</h2><h2>Female Voting Percentage:"+femalePer.toFixed(2)+"</h2>";
+                var addcand = $("#rest")[0];
+                addcand.appendChild(newdiv);
+                });
+                
+            }
+        </script>
+        
+    </body>
+</html>
